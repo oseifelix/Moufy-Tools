@@ -78,8 +78,8 @@ export default function BgRemover() {
 
     return (
         <div className="max-w-4xl mx-auto">
-            <div className="bg-card border border-border rounded-xl p-6 shadow-lg">
-                <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+            <div className="bg-card border border-border rounded-xl p-4 md:p-6 shadow-lg">
+                <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 flex items-center gap-2">
                     <Scissors className="text-primary" /> Background Remover
                 </h2>
 
@@ -92,7 +92,7 @@ export default function BgRemover() {
 
                 {!file && (
                     <div
-                        className="border-2 border-dashed border-white/10 rounded-xl p-16 text-center hover:bg-white/5 transition-colors cursor-pointer"
+                        className="border-2 border-dashed border-white/10 rounded-xl p-8 md:p-16 text-center hover:bg-white/5 transition-colors cursor-pointer"
                         onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
                         onDrop={handleDrop}
                         onClick={() => document.getElementById('bg-input').click()}
@@ -114,7 +114,7 @@ export default function BgRemover() {
                 )}
 
                 {file && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
                         <div className="space-y-4">
                             <div className="flex items-center justify-between">
                                 <h3 className="font-semibold text-lg flex items-center gap-2">
@@ -127,7 +127,7 @@ export default function BgRemover() {
                                     Remove
                                 </button>
                             </div>
-                            <div className="aspect-square bg-black/50 rounded-lg overflow-hidden flex items-center justify-center border border-white/10">
+                            <div className="aspect-video md:aspect-square bg-black/50 rounded-lg overflow-hidden flex items-center justify-center border border-white/10">
                                 <img
                                     src={originalUrl}
                                     alt="Original"
@@ -141,7 +141,7 @@ export default function BgRemover() {
                                 <Scissors size={18} /> Result
                             </h3>
                             <div
-                                className="aspect-square rounded-lg overflow-hidden flex items-center justify-center border border-white/10 relative"
+                                className="aspect-video md:aspect-square rounded-lg overflow-hidden flex items-center justify-center border border-white/10 relative"
                                 style={{
                                     backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Crect width='10' height='10' fill='%23333'/%3E%3Crect x='10' y='10' width='10' height='10' fill='%23333'/%3E%3Crect x='10' width='10' height='10' fill='%23444'/%3E%3Crect y='10' width='10' height='10' fill='%23444'/%3E%3C/svg%3E")`,
                                     backgroundSize: '20px 20px'

@@ -1,4 +1,4 @@
-import React, { useState, Suspense, lazy } from 'react';
+import React, { useState, Suspense, lazy, useEffect } from 'react';
 import {
   LayoutDashboard,
   FileText,
@@ -14,7 +14,6 @@ import {
   Menu,
   X,
   ChevronRight,
-  ExternalLink,
   Loader2
 } from 'lucide-react';
 import AdSpace from './components/AdSpace';
@@ -46,46 +45,94 @@ const tools = [
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile screen size
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+      // On desktop, keep sidebar open by default
+      if (window.innerWidth >= 768) {
+        setSidebarOpen(true);
+      }
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Handle tool selection - close sidebar on mobile
+  const handleToolSelect = (toolId) => {
+    setActiveTab(toolId);
+    if (isMobile) {
+      setSidebarOpen(false);
+    }
+  };
 
   const CurrentTool = tools.find(t => t.id === activeTab)?.component;
 
   return (
     <div className="min-h-screen bg-background text-foreground flex overflow-hidden">
+      {/* Mobile Backdrop Overlay */}
+      {isMobile && sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className={`${sidebarOpen ? 'w-64' : 'w-20'} transition-all duration-300 border-r border-border bg-card flex flex-col z-20`}>
-        <div className="p-6 flex items-center justify-between">
-          <h1 className={`font-black text-2xl text-primary tracking-tighter ${!sidebarOpen && 'hidden'}`}>Moufy Tools</h1>
-          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 hover:bg-white/5 rounded-lg">
+      <aside 
+        className={`
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} 
+          ${sidebarOpen ? 'w-64' : 'md:w-20'} 
+          fixed md:relative h-full
+          transition-all duration-300 ease-in-out
+          border-r border-border bg-card flex flex-col z-40
+          w-64
+        `}
+      >
+        <div className="p-4 md:p-6 flex items-center justify-between">
+          <h1 className={`font-black text-xl md:text-2xl text-primary tracking-tighter ${!sidebarOpen && !isMobile && 'md:hidden'}`}>
+            Moufy Tools
+          </h1>
+          <button 
+            onClick={() => setSidebarOpen(!sidebarOpen)} 
+            className="p-2 hover:bg-white/5 rounded-lg"
+            aria-label={sidebarOpen ? 'Close menu' : 'Open menu'}
+          >
             {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
 
-        <nav className="flex-1 px-4 py-2 space-y-1 overflow-y-auto custom-scrollbar">
+        <nav className="flex-1 px-3 md:px-4 py-2 space-y-1 overflow-y-auto custom-scrollbar">
           <button
-            onClick={() => setActiveTab('dashboard')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'dashboard' ? 'bg-primary/10 text-primary border border-primary/20' : 'hover:bg-white/5 text-muted-foreground'}`}
+            onClick={() => handleToolSelect('dashboard')}
+            className={`w-full flex items-center gap-3 px-3 md:px-4 py-3 rounded-xl transition-all ${activeTab === 'dashboard' ? 'bg-primary/10 text-primary border border-primary/20' : 'hover:bg-white/5 text-muted-foreground'}`}
           >
             <LayoutDashboard size={20} />
-            {sidebarOpen && <span className="font-semibold">Dashboard</span>}
+            {(sidebarOpen || isMobile) && <span className="font-semibold">Dashboard</span>}
           </button>
 
-          <div className={`mt-8 mb-4 px-4 text-xs font-bold uppercase tracking-widest text-muted-foreground opacity-50 ${!sidebarOpen && 'hidden'}`}>Utilities</div>
+          <div className={`mt-6 md:mt-8 mb-3 md:mb-4 px-3 md:px-4 text-xs font-bold uppercase tracking-widest text-muted-foreground opacity-50 ${(!sidebarOpen && !isMobile) && 'md:hidden'}`}>
+            Utilities
+          </div>
 
           {tools.map((tool) => (
             <button
               key={tool.id}
-              onClick={() => setActiveTab(tool.id)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === tool.id ? 'bg-primary/10 text-primary border border-primary/20 shadow-lg shadow-primary/5' : 'hover:bg-white/5 text-muted-foreground'}`}
+              onClick={() => handleToolSelect(tool.id)}
+              className={`w-full flex items-center gap-3 px-3 md:px-4 py-3 rounded-xl transition-all ${activeTab === tool.id ? 'bg-primary/10 text-primary border border-primary/20 shadow-lg shadow-primary/5' : 'hover:bg-white/5 text-muted-foreground'}`}
             >
               <tool.icon size={20} className={activeTab === tool.id ? tool.color : 'text-inherit'} />
-              {sidebarOpen && <span className="font-medium">{tool.name}</span>}
+              {(sidebarOpen || isMobile) && <span className="font-medium text-sm md:text-base">{tool.name}</span>}
             </button>
           ))}
         </nav>
 
-        {sidebarOpen && (
-          <div className="p-4">
+        {(sidebarOpen || isMobile) && (
+          <div className="p-4 hidden md:block">
             <AdSpace type="sidebar" />
           </div>
         )}
@@ -93,31 +140,50 @@ export default function App() {
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col h-screen overflow-hidden relative">
-        <header className="h-16 border-b border-border bg-card/50 backdrop-blur-xl flex items-center justify-center px-8">
-          <AdSpace type="top-banner" />
+        {/* Header */}
+        <header className="h-12 md:h-16 border-b border-border bg-card/50 backdrop-blur-xl flex items-center justify-between px-3 md:px-8">
+          {/* Mobile hamburger menu */}
+          <button 
+            onClick={() => setSidebarOpen(true)}
+            className="md:hidden p-2 hover:bg-white/5 rounded-lg -ml-1"
+            aria-label="Open menu"
+          >
+            <Menu size={22} />
+          </button>
+
+          {/* Mobile title */}
+          <h1 className="md:hidden font-bold text-lg text-primary">Moufy Tools</h1>
+
+          {/* Ad space - hidden on mobile */}
+          <div className="hidden md:flex flex-1 justify-center">
+            <AdSpace type="top-banner" />
+          </div>
+
+          {/* Empty spacer for mobile layout balance */}
+          <div className="md:hidden w-10" />
         </header>
 
-        <div className="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-3 md:p-8 custom-scrollbar">
           {activeTab === 'dashboard' ? (
             <div className="max-w-6xl mx-auto animate-in fade-in duration-500">
-              <div className="mb-12">
-                <h2 className="text-4xl font-black mb-2 tracking-tight">Welcome, Toolmaster.</h2>
-                <p className="text-muted-foreground text-lg">Pick a tool below to get started. All processing is 100% local.</p>
+              <div className="mb-6 md:mb-12">
+                <h2 className="text-2xl md:text-4xl font-black mb-2 tracking-tight">Welcome, Toolmaster.</h2>
+                <p className="text-muted-foreground text-sm md:text-lg">Pick a tool below to get started. All processing is 100% local.</p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
                 {tools.map((tool) => (
                   <button
                     key={tool.id}
-                    onClick={() => setActiveTab(tool.id)}
-                    className="group bg-card border border-border rounded-2xl p-6 text-left hover:border-primary/50 hover:bg-white/5 transition-all hover:scale-[1.02] active:scale-95 shadow-xl relative overflow-hidden"
+                    onClick={() => handleToolSelect(tool.id)}
+                    className="group bg-card border border-border rounded-xl md:rounded-2xl p-4 md:p-6 text-left hover:border-primary/50 hover:bg-white/5 transition-all hover:scale-[1.02] active:scale-95 shadow-xl relative overflow-hidden"
                   >
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-6 bg-white/5 group-hover:bg-primary/20 transition-colors`}>
-                      <tool.icon className={`${tool.color} group-hover:scale-110 transition-transform`} size={24} />
+                    <div className={`w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl flex items-center justify-center mb-3 md:mb-6 bg-white/5 group-hover:bg-primary/20 transition-colors`}>
+                      <tool.icon className={`${tool.color} group-hover:scale-110 transition-transform`} size={20} />
                     </div>
-                    <h3 className="text-xl font-bold mb-2">{tool.name}</h3>
-                    <p className="text-sm text-muted-foreground mb-4">{tool.desc}</p>
-                    <div className="flex items-center text-xs font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                    <h3 className="text-sm md:text-xl font-bold mb-1 md:mb-2 leading-tight">{tool.name}</h3>
+                    <p className="text-xs md:text-sm text-muted-foreground mb-2 md:mb-4 hidden sm:block">{tool.desc}</p>
+                    <div className="hidden sm:flex items-center text-xs font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity">
                       Open tool <ChevronRight size={14} className="ml-1" />
                     </div>
                   </button>
@@ -133,7 +199,8 @@ export default function App() {
           )}
         </div>
 
-        <footer className="h-20 border-t border-border bg-card/50 backdrop-blur-xl flex items-center justify-center px-8 shrink-0">
+        {/* Footer - hidden on mobile for more content space */}
+        <footer className="hidden md:flex h-20 border-t border-border bg-card/50 backdrop-blur-xl items-center justify-center px-8 shrink-0">
           <AdSpace type="bottom-banner" />
         </footer>
       </main>

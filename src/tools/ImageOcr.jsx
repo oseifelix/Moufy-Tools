@@ -121,9 +121,9 @@ export default function ImageOcr() {
     };
 
     return (
-        <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 h-[80vh]">
+        <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8 min-h-[60vh] md:h-[80vh]">
             <div className="flex flex-col gap-6">
-                <div className="bg-card border border-border rounded-xl p-6 shadow-lg flex-1 flex flex-col">
+                <div className="bg-card border border-border rounded-xl p-4 md:p-6 shadow-lg flex-1 flex flex-col">
                     <div className="flex items-center justify-between mb-4">
                         <h2 className="text-2xl font-bold flex items-center gap-2">
                             <ScanText className="text-primary" /> Image to Text
@@ -153,7 +153,7 @@ export default function ImageOcr() {
 
                     {!file ? (
                         <div
-                            className="flex-1 border-2 border-dashed border-white/10 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-white/5 transition-colors min-h-[300px]"
+                            className="flex-1 border-2 border-dashed border-white/10 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-white/5 transition-colors min-h-[200px] md:min-h-[300px]"
                             onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
                             onDrop={handleDrop}
                             onClick={() => document.getElementById('ocr-input').click()}
@@ -173,7 +173,7 @@ export default function ImageOcr() {
                         </div>
                     ) : (
                         <div className="flex-1 flex flex-col gap-4">
-                            <div className="relative flex-1 bg-black/50 rounded-xl overflow-hidden flex items-center justify-center border border-white/10 min-h-[300px]">
+                            <div className="relative flex-1 bg-black/50 rounded-xl overflow-hidden flex items-center justify-center border border-white/10 min-h-[200px] md:min-h-[300px]">
                                 <img src={URL.createObjectURL(file)} className="max-w-full max-h-full object-contain" alt="Upload Preview" />
                                 <button
                                     onClick={() => setFile(null)}
@@ -197,7 +197,7 @@ export default function ImageOcr() {
             </div>
 
             <div className="flex flex-col">
-                <div className="bg-card border border-border rounded-xl p-6 shadow-lg flex-1 flex flex-col h-full">
+                <div className="bg-card border border-border rounded-xl p-4 md:p-6 shadow-lg flex-1 flex flex-col h-full">
                     <div className="flex items-center justify-between mb-4">
                         <h3 className="font-semibold text-lg flex items-center gap-2">
                             <FileText size={18} /> Extracted Text

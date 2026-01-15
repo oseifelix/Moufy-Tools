@@ -36,7 +36,7 @@ export default function PdfSuite() {
     const [activeTool, setActiveTool] = useState('select');
     const [overlays, setOverlays] = useState({});
     const [selectedOverlay, setSelectedOverlay] = useState(null);
-    const [showThumbnails, setShowThumbnails] = useState(true);
+    const [showThumbnails, setShowThumbnails] = useState(window.innerWidth >= 768);
     const [thumbnails, setThumbnails] = useState({});
 
     // History for undo/redo
@@ -1349,9 +1349,9 @@ export default function PdfSuite() {
     }
 
     return (
-        <div className="flex flex-col h-[85vh] max-w-7xl mx-auto bg-card border border-border rounded-xl shadow-2xl overflow-hidden">
+        <div className="flex flex-col h-[75vh] md:h-[85vh] max-w-7xl mx-auto bg-card border border-border rounded-lg md:rounded-xl shadow-2xl overflow-hidden">
             {/* Top Toolbar */}
-            <div className="bg-white/5 border-b border-border p-2 flex items-center gap-2 overflow-x-auto">
+            <div className="bg-white/5 border-b border-border p-1.5 md:p-2 flex items-center gap-1 md:gap-2 overflow-x-auto scrollbar-none">
                 {/* Logo & Upload */}
                 <div className="flex items-center gap-2 pr-4 border-r border-white/10">
                     <FileText className="text-primary" size={24} />
@@ -1578,7 +1578,7 @@ export default function PdfSuite() {
             <div className="flex-1 flex overflow-hidden">
                 {/* Page Thumbnails Sidebar */}
                 {file && showThumbnails && (
-                    <div className="absolute z-10 h-full w-32 bg-neutral-900/95 border-r border-border overflow-y-auto p-2 space-y-2 shadow-xl md:relative md:bg-black/30 md:shadow-none">
+                    <div className="hidden md:block absolute z-10 h-full w-24 md:w-32 bg-neutral-900/95 border-r border-border overflow-y-auto p-2 space-y-2 shadow-xl md:relative md:bg-black/30 md:shadow-none">
                         {Object.entries(thumbnails).map(([pageNum, src]) => (
                             <button
                                 key={pageNum}
@@ -1596,7 +1596,7 @@ export default function PdfSuite() {
                 )}
 
                 {/* PDF Canvas Area */}
-                <div className="flex-1 bg-neutral-900/50 overflow-auto flex justify-center p-8" ref={containerRef}>
+                <div className="flex-1 bg-neutral-900/50 overflow-auto flex justify-center p-2 md:p-8" ref={containerRef}>
                     {!file ? (
                         <div className="flex flex-col items-center justify-center text-muted-foreground">
                             <FileText size={64} className="mb-4 opacity-30" />
@@ -1646,10 +1646,10 @@ export default function PdfSuite() {
                             <ChevronRight size={18} />
                         </button>
                     </div>
-                    <div className="flex items-center gap-4 text-muted-foreground text-xs">
+                    <div className="flex items-center gap-2 md:gap-4 text-muted-foreground text-xs">
                         <span>Annotations: {(overlays[currentPage] || []).length}</span>
-                        <span className="opacity-50">|</span>
-                        <span>Ctrl+Z: Undo | Ctrl+Y: Redo | Del: Delete | Esc: Deselect</span>
+                        <span className="opacity-50 hidden md:inline">|</span>
+                        <span className="hidden md:inline">Ctrl+Z: Undo | Ctrl+Y: Redo | Del: Delete | Esc: Deselect</span>
                     </div>
                 </div>
             )}

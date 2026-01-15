@@ -84,9 +84,9 @@ export default function VideoCompressor() {
 
     return (
         <div className="max-w-4xl mx-auto">
-            <div className="bg-card border border-border rounded-xl p-6 shadow-lg">
-                <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-2xl font-bold flex items-center gap-2">
+            <div className="bg-card border border-border rounded-xl p-4 md:p-6 shadow-lg">
+                <div className="flex items-center justify-between mb-4 md:mb-6">
+                    <h2 className="text-xl md:text-2xl font-bold flex items-center gap-2">
                         <Video className="text-primary" /> Video Compressor
                     </h2>
                     <div className="hidden md:flex items-center gap-2 bg-yellow-500/10 text-yellow-500 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider">
@@ -125,11 +125,11 @@ export default function VideoCompressor() {
                     </div>
                 ) : (
                     <div className="space-y-8">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div className="space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+                            <div className="space-y-4 md:space-y-6">
                                 {!file ? (
                                     <div
-                                        className="h-full min-h-[250px] border-2 border-dashed border-white/10 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-white/5 transition-colors"
+                                        className="h-full min-h-[180px] md:min-h-[250px] border-2 border-dashed border-white/10 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-white/5 transition-colors"
                                         onClick={() => document.getElementById('vid-input').click()}
                                     >
                                         <input
@@ -139,10 +139,10 @@ export default function VideoCompressor() {
                                             className="hidden"
                                             onChange={(e) => e.target.files && setFile(e.target.files[0])}
                                         />
-                                        <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mb-4 text-primary">
-                                            <Upload size={32} />
+                                        <div className="w-12 h-12 md:w-16 md:h-16 bg-primary/20 rounded-full flex items-center justify-center mb-3 md:mb-4 text-primary">
+                                            <Upload size={24} className="md:w-8 md:h-8" />
                                         </div>
-                                        <p className="font-semibold text-lg">Select Video</p>
+                                        <p className="font-semibold text-base md:text-lg">Select Video</p>
                                         <p className="text-xs text-muted-foreground mt-2">MP4, WebM, MOV supported</p>
                                     </div>
                                 ) : (
@@ -161,8 +161,8 @@ export default function VideoCompressor() {
                                 )}
                             </div>
 
-                            <div className="flex flex-col justify-center space-y-8">
-                                <div className="space-y-4">
+                            <div className="flex flex-col justify-center space-y-4 md:space-y-8">
+                                <div className="space-y-3 md:space-y-4">
                                     <label className="flex justify-between font-medium">
                                         <span>Compression Level (CRF)</span>
                                         <span className="text-primary">{quality}</span>
@@ -204,7 +204,7 @@ export default function VideoCompressor() {
                         </div>
 
                         {outputUrl && (
-                            <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-6 flex flex-col md:flex-row items-center justify-between gap-4 animate-in fade-in slide-in-from-bottom-4">
+                            <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-4 md:p-6 flex flex-col md:flex-row items-center justify-between gap-4 animate-in fade-in slide-in-from-bottom-4">
                                 <div>
                                     <h3 className="text-lg font-bold text-green-400 mb-1">Compression Complete!</h3>
                                     <p className="text-sm text-green-400/80">
